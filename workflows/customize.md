@@ -172,7 +172,29 @@ Bắt đầu nhé?"
 3️⃣ **Custom - Mô tả tốc độ anh muốn**"
 ```
 
-### 4.2. Feedback Style
+### 4.2. Response Length (Độ dài câu trả lời)
+```
+"📝 Anh muốn em trả lời dài hay ngắn?
+
+1️⃣ **Ngắn gọn, súc tích**
+   - Chỉ nói điểm chính
+   - Không giải thích dài dòng
+   - Đi thẳng vào vấn đề
+
+2️⃣ **Vừa phải** (Default)
+   - Đủ chi tiết để hiểu
+   - Có ví dụ khi cần
+   - Cân bằng ngắn/dài
+
+3️⃣ **Chi tiết, đầy đủ**
+   - Giải thích kỹ từng bước
+   - Nhiều ví dụ minh họa
+   - Context đầy đủ
+
+4️⃣ **Custom - Mô tả cách anh muốn**"
+```
+
+### 4.3. Feedback Style
 ```
 "💬 Khi có vấn đề với code/idea của anh, em nên:
 
@@ -217,11 +239,12 @@ Anh cứ liệt kê, em sẽ nhớ hết!"
 
 ---
 
-## Giai đoạn 5: Lưu Preferences
+## Giai đoạn 5: Tổng hợp & Lưu (CHỈ 1 OUTPUT DUY NHẤT!)
 
-### 5.1. Tổng hợp
+⚠️ **QUAN TRỌNG:** Chỉ hiển thị 1 khối output duy nhất, KHÔNG lặp lại!
+
 ```
-"📋 **SETTINGS CỦA ANH:**
+"📋 **SETTINGS CỦA [Xưng hô user chọn]:**
 
 🗣️ Giao tiếp: [Lựa chọn]
 🎭 Persona: [Lựa chọn]
@@ -229,29 +252,26 @@ Anh cứ liệt kê, em sẽ nhớ hết!"
 🤖 Autonomy: [Lựa chọn]
 🎯 Quality: [Lựa chọn]
 ⏱️ Pace: [Lựa chọn]
+📝 Response: [Ngắn gọn / Vừa phải / Chi tiết]
 💬 Feedback: [Lựa chọn]
 
 📝 Custom Rules:
-[Liệt kê các yêu cầu đặc biệt nếu có]
+[Liệt kê nếu có]
 
-Em sẽ nhớ và áp dụng cho toàn bộ dự án!
-Muốn thay đổi? Gõ /customize bất cứ lúc nào."
+---
+
+💾 Lưu settings ở đâu?
+1️⃣ **Global** - Dùng cho TẤT CẢ projects (~/.ai-preferences.md)
+2️⃣ **Project này** - Chỉ project hiện tại (./.ai-preferences.md)
+3️⃣ **Cả hai** - Global mặc định, project override"
 ```
 
-### 5.2. Lưu vào File (Persistent)
+**Sau khi user chọn nơi lưu → Lưu file → Hiển thị NEXT STEPS (bên dưới)**
 
-**Hỏi user muốn lưu ở đâu:**
-```
-"💾 Anh muốn lưu settings ở đâu?
-
-1️⃣ **Global** (Recommended) - Dùng cho TẤT CẢ projects
-   → Lưu tại: ~/.ai-preferences.md
-
-2️⃣ **Project này thôi** - Chỉ dùng cho project hiện tại
-   → Lưu tại: ./.ai-preferences.md (thư mục gốc project)
-
-3️⃣ **Cả hai** - Global làm mặc định, project override khi cần"
-```
+⛔ **KHÔNG ĐƯỢC:**
+- Lặp lại settings 2 lần
+- Thêm đoạn "Thiếp đã ghi nhớ..." sau khi đã show bảng
+- Paraphrase lại từng setting
 
 **Template file `.ai-preferences.md`:**
 ```markdown
@@ -268,6 +288,7 @@ Muốn thay đổi? Gõ /customize bất cứ lúc nào."
 
 ## Working Style
 - Pace: [Lựa chọn]
+- Response Length: [Ngắn gọn / Vừa phải / Chi tiết]
 - Feedback: [Lựa chọn]
 
 ## Custom Rules
