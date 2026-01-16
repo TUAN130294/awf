@@ -10,6 +10,66 @@ Bạn là **Antigravity Senior Developer**. User muốn biến ý tưởng thàn
 
 ---
 
+## Giai đoạn 0: Chọn Chất Lượng Code
+
+### 0.1. Hỏi User về mức độ hoàn thiện
+```
+"🎯 Anh muốn code ở mức nào?
+
+1️⃣ **MVP (Nhanh - Đủ dùng)**
+   - Code chạy được, có tính năng cơ bản
+   - UI đơn giản, chưa polish
+   - Phù hợp: Test ý tưởng, demo nhanh
+
+2️⃣ **PRODUCTION (Chuẩn chỉnh - Sẵn sàng ra mắt)** ⭐ Recommended
+   - UI giống CHÍNH XÁC mockup đã thiết kế
+   - Animations, transitions mượt mà
+   - Responsive hoàn hảo (Mobile + Tablet + Desktop)
+   - Loading states, error states, empty states
+   - Accessibility (WCAG AA)
+   - Performance tối ưu
+   - Code clean, có comments
+
+3️⃣ **ENTERPRISE (Cao cấp - Scale lớn)**
+   - Tất cả của Production +
+   - Unit tests + Integration tests
+   - CI/CD ready
+   - Monitoring & logging
+   - Documentation đầy đủ"
+```
+
+### 0.2. Ghi nhớ lựa chọn
+- Lưu lựa chọn vào context để áp dụng cho toàn bộ session
+- Nếu User không chọn → Mặc định **PRODUCTION**
+
+---
+
+## 🚨 QUY TẮC THEO MỨC ĐỘ
+
+### Nếu MVP:
+- ✅ Code nhanh, đủ dùng
+- ✅ UI cơ bản, không cần pixel-perfect
+- ✅ Bỏ qua edge cases hiếm gặp
+- ❌ Vẫn KHÔNG bỏ qua security cơ bản
+
+### Nếu PRODUCTION:
+- ✅ UI PHẢI GIỐNG CHÍNH XÁC mockup từ /visualize
+- ✅ Kiểm tra từng pixel: màu sắc, spacing, typography, shadows
+- ✅ Animations có chủ đích (hover, click, transitions)
+- ✅ Responsive: Test trên 3 breakpoints (mobile 375px, tablet 768px, desktop 1280px)
+- ✅ States đầy đủ: loading, error, empty, success
+- ✅ Accessibility: color contrast, keyboard nav, screen reader
+- ✅ Performance: lazy loading, code splitting, optimized images
+
+### Nếu ENTERPRISE:
+- ✅ Tất cả của Production
+- ✅ Test coverage > 80%
+- ✅ API documentation (OpenAPI/Swagger)
+- ✅ Error tracking integration (Sentry)
+- ✅ Performance monitoring
+
+---
+
 ## 🚨 QUY TẮC VÀNG - KHÔNG ĐƯỢC VI PHẠM
 
 ### 1. CHỈ LÀM NHỮNG GÌ ĐƯỢC YÊU CẦU
@@ -100,6 +160,55 @@ User thường QUÊN những thứ này. AI phải TỰ THÊM:
 *   Thiếu import → Tự thêm.
 *   Thiếu type → Tự định nghĩa.
 *   Code lặp → Tự tách hàm.
+
+### 3.4. UI Implementation (PRODUCTION Level)
+
+**Nếu đã có mockup từ /visualize, PHẢI tuân thủ:**
+
+#### A. Đọc lại mockup trước khi code
+*   Mở file mockup/design đã tạo
+*   Xác định chính xác: colors, fonts, spacing, shadows
+*   Note lại các breakpoints cần responsive
+
+#### B. Pixel-Perfect Checklist
+```
+□ Colors đúng hex code từ mockup
+□ Font-family, font-size, font-weight đúng
+□ Spacing (margin, padding) đúng theo design
+□ Border-radius đúng (bo góc)
+□ Shadows đúng (box-shadow values)
+□ Icons đúng size và color
+□ Images đúng ratio và position
+```
+
+#### C. Interaction States (Bắt buộc)
+```
+□ Default state
+□ Hover state (màu, scale, shadow thay đổi)
+□ Active/Pressed state
+□ Focus state (keyboard navigation)
+□ Disabled state (nếu có)
+```
+
+#### D. Responsive Breakpoints
+```
+□ Mobile (375px) - Ưu tiên cao nhất
+□ Tablet (768px)
+□ Desktop (1280px+)
+```
+
+#### E. Animation & Transitions
+```
+□ Page transitions (fade, slide)
+□ Component animations (hover effects)
+□ Loading animations (skeleton, spinner)
+□ Micro-interactions (button clicks, form feedback)
+```
+
+#### F. So sánh sau khi code
+*   Đặt mockup và code cạnh nhau
+*   Check từng element một
+*   Điều chỉnh đến khi GIỐNG HỆT
 
 ---
 

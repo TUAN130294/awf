@@ -138,6 +138,78 @@ Nhiều Vibe Coder không nghĩ tới những thứ này. AI phải hỏi chủ 
 *   User: "Nhìn tù tù" → AI thêm spacing, shadows
 *   User: "Màu chói quá" → AI giảm saturation
 
+### 4.3. ⚠️ QUAN TRỌNG: Tạo Design Specs cho /code
+
+**SAU KHI mockup được duyệt, PHẢI tạo file `docs/design-specs.md`:**
+
+```markdown
+# Design Specifications
+
+## 🎨 Color Palette
+| Name | Hex | Usage |
+|------|-----|-------|
+| Primary | #6366f1 | Buttons, links, accent |
+| Primary Dark | #4f46e5 | Hover states |
+| Secondary | #10b981 | Success, positive |
+| Background | #0f172a | Main background |
+| Surface | #1e293b | Cards, modals |
+| Text | #f1f5f9 | Primary text |
+| Text Muted | #94a3b8 | Secondary text |
+
+## 📝 Typography
+| Element | Font | Size | Weight | Line Height |
+|---------|------|------|--------|-------------|
+| H1 | Inter | 48px | 700 | 1.2 |
+| H2 | Inter | 36px | 600 | 1.3 |
+| H3 | Inter | 24px | 600 | 1.4 |
+| Body | Inter | 16px | 400 | 1.6 |
+| Small | Inter | 14px | 400 | 1.5 |
+
+## 📐 Spacing System
+| Name | Value | Usage |
+|------|-------|-------|
+| xs | 4px | Icon gaps |
+| sm | 8px | Tight spacing |
+| md | 16px | Default |
+| lg | 24px | Section gaps |
+| xl | 32px | Large sections |
+| 2xl | 48px | Page sections |
+
+## 🔲 Border Radius
+| Name | Value | Usage |
+|------|-------|-------|
+| sm | 4px | Buttons, inputs |
+| md | 8px | Cards |
+| lg | 12px | Modals |
+| full | 9999px | Pills, avatars |
+
+## 🌫️ Shadows
+| Name | Value | Usage |
+|------|-------|-------|
+| sm | 0 1px 2px rgba(0,0,0,0.05) | Subtle elevation |
+| md | 0 4px 6px rgba(0,0,0,0.1) | Cards |
+| lg | 0 10px 15px rgba(0,0,0,0.1) | Modals, dropdowns |
+
+## 📱 Breakpoints
+| Name | Width | Description |
+|------|-------|-------------|
+| mobile | 375px | Mobile phones |
+| tablet | 768px | Tablets |
+| desktop | 1280px | Desktops |
+
+## ✨ Animations
+| Name | Duration | Easing | Usage |
+|------|----------|--------|-------|
+| fast | 150ms | ease-out | Hovers, small |
+| normal | 300ms | ease-in-out | Transitions |
+| slow | 500ms | ease-in-out | Page transitions |
+
+## 🖼️ Component Specs
+[Chi tiết từng component với exact CSS values]
+```
+
+**Lưu file này để /code có thể follow chính xác!**
+
 ---
 
 ## Giai đoạn 6: Pixel-Perfect Implementation
