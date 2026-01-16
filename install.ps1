@@ -7,7 +7,8 @@ $Workflows = @(
     "plan.md", "code.md", "visualize.md", "deploy.md",
     "debug.md", "refactor.md", "test.md", "run.md",
     "init.md", "recap.md", "rollback.md", "save_brain.md",
-    "audit.md", "cloudflare-tunnel.md", "awf-update.md", "README.md"
+    "audit.md", "cloudflare-tunnel.md", "awf-update.md",
+    "brainstorm.md", "next.md", "README.md"
 )
 
 # Detect Antigravity Global Path
@@ -75,6 +76,7 @@ Bạn PHẢI đọc file workflow tương ứng và thực hiện theo hướng 
 ## Command Mapping (QUAN TRỌNG):
 | Command | Workflow File | Mô tả |
 |---------|--------------|-------|
+| ``/brainstorm`` | ~/.gemini/antigravity/global_workflows/brainstorm.md | 💡 Bàn ý tưởng, research thị trường |
 | ``/plan`` | ~/.gemini/antigravity/global_workflows/plan.md | Thiết kế tính năng |
 | ``/code`` | ~/.gemini/antigravity/global_workflows/code.md | Viết code an toàn |
 | ``/visualize`` | ~/.gemini/antigravity/global_workflows/visualize.md | Tạo UI/UX |
@@ -84,6 +86,7 @@ Bạn PHẢI đọc file workflow tương ứng và thực hiện theo hướng 
 | ``/deploy`` | ~/.gemini/antigravity/global_workflows/deploy.md | Deploy production |
 | ``/init`` | ~/.gemini/antigravity/global_workflows/init.md | Khởi tạo dự án |
 | ``/recap`` | ~/.gemini/antigravity/global_workflows/recap.md | Khôi phục ngữ cảnh |
+| ``/next`` | ~/.gemini/antigravity/global_workflows/next.md | Gợi ý bước tiếp theo |
 | ``/save-brain`` | ~/.gemini/antigravity/global_workflows/save_brain.md | Lưu kiến thức |
 | ``/audit`` | ~/.gemini/antigravity/global_workflows/audit.md | Kiểm tra bảo mật |
 | ``/refactor`` | ~/.gemini/antigravity/global_workflows/refactor.md | Tái cấu trúc code |
