@@ -127,6 +127,7 @@ curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | sh
 | **`/audit`** | Security | Kiểm tra bảo mật / Security Check |
 | **`/deploy`** | DevOps | Deploy & Docker |
 | **`/cloudflare-tunnel`** | Admin | Quản lý Tunnel |
+| **`/awf-update`** | Updater | Kiểm tra & cập nhật AWF |
 
 ---
 
