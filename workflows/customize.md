@@ -238,10 +238,34 @@ Em sẽ nhớ và áp dụng cho toàn bộ dự án!
 Muốn thay đổi? Gõ /customize bất cứ lúc nào."
 ```
 
-### 5.2. Lưu vào Context
-*   Lưu preferences vào session context
-*   Áp dụng cho tất cả các workflow sau
-*   Nhắc lại khi cần (VD: "Theo settings, anh muốn em giải thích đơn giản...")
+### 5.2. Lưu vào File (Persistent)
+**Tạo file `.ai-preferences.md` trong thư mục gốc dự án:**
+
+```markdown
+# AI Preferences
+
+## Communication
+- Tone: [Lựa chọn]
+- Persona: [Lựa chọn]
+
+## Technical
+- Detail Level: [Lựa chọn]
+- Autonomy: [Lựa chọn]
+- Quality: [Lựa chọn]
+
+## Working Style
+- Pace: [Lựa chọn]
+- Feedback: [Lựa chọn]
+
+## Custom Rules
+- [Rule 1]
+- [Rule 2]
+```
+
+**Lưu ý:**
+*   File này nằm trong thư mục gốc → AI đọc được khi bắt đầu session
+*   Commit vào git để team cùng dùng (nếu muốn)
+*   Hoặc thêm vào .gitignore nếu chỉ dùng cá nhân
 
 ---
 
@@ -257,6 +281,12 @@ Muốn thay đổi? Gõ /customize bất cứ lúc nào."
 ## 🔗 Áp dụng vào các Workflow khác
 
 **Khi bắt đầu session mới:**
-- Nếu có `/customize` đã lưu → Áp dụng ngay
-- Nếu chưa có → Dùng settings mặc định
-- User có thể chạy `/customize` bất cứ lúc nào để thay đổi
+1. Kiểm tra file `.ai-preferences.md` trong thư mục gốc
+2. Nếu có → Đọc và áp dụng ngay
+3. Nếu chưa có → Dùng settings mặc định
+4. User có thể chạy `/customize` bất cứ lúc nào để thay đổi
+
+**Trong mỗi workflow:**
+- Đọc `.ai-preferences.md` trước khi bắt đầu
+- Áp dụng tone, persona, detail level theo settings
+- Tuân thủ Custom Rules đã định nghĩa
