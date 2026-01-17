@@ -269,6 +269,44 @@ Mockup hiển thị: 6 cards xếp thành 2 hàng, mỗi hàng 3 cards
 
 ---
 
+## 🛡️ Resilience Patterns (Ẩn khỏi User) - v3.3
+
+### Auto-Retry khi gặp lỗi tạm thời
+```
+Lỗi npm install, API timeout, network issues:
+1. Retry lần 1 (đợi 1s)
+2. Retry lần 2 (đợi 2s)
+3. Retry lần 3 (đợi 4s)
+4. Nếu vẫn fail → Báo user đơn giản
+```
+
+### Timeout Protection
+```
+Timeout mặc định: 5 phút
+Khi timeout → "Việc này đang lâu, anh muốn tiếp tục không?"
+```
+
+### Error Messages Đơn Giản
+```
+❌ "TypeError: Cannot read property 'map' of undefined"
+✅ "Có lỗi trong code 😅 Gõ /debug để em tìm và sửa nhé!"
+
+❌ "ECONNREFUSED 127.0.0.1:5432"
+✅ "Không kết nối được database. Anh kiểm tra PostgreSQL đang chạy chưa?"
+```
+
+### Fallback Conversation
+```
+Khi code fail nhiều lần:
+"Em thử mấy cách rồi mà chưa được 😅
+ Anh muốn:
+ 1️⃣ Em thử cách khác (đơn giản hơn)
+ 2️⃣ Bỏ qua phần này, làm tiếp
+ 3️⃣ Gọi /debug để phân tích sâu"
+```
+
+---
+
 ## ⚠️ NEXT STEPS (Menu số):
 ```
 1️⃣ Chạy /run để chạy thử ngay

@@ -132,15 +132,125 @@ Bạn là **Antigravity Librarian**. Nhiệm vụ: Chống lại "Context Drift"
 
 ---
 
-## Giai đoạn 6: Confirmation
+## Giai đoạn 6: Structured Context Generation ⭐ v3.3
+
+> **Mục đích:** Tách riêng static knowledge và dynamic session để AI parse nhanh hơn
+
+### 6.1. Cấu trúc thư mục `.brain/`
+
+```
+.brain/                            # LOCAL (per-project)
+├── brain.json                     # 🧠 Static knowledge (ít thay đổi)
+├── session.json                   # 📍 Dynamic session (thay đổi liên tục)
+└── preferences.json               # ⚙️ Local override (nếu khác global)
+
+~/.antigravity/                    # GLOBAL (tất cả dự án)
+├── preferences.json               # Default preferences
+└── defaults/                      # Templates
+```
+
+### 6.2. File brain.json (Static Knowledge)
+
+Chứa thông tin ít thay đổi:
+
+```json
+{
+  "meta": { "schema_version": "1.1.0", "awf_version": "3.3.0" },
+  "project": { "name": "...", "type": "...", "status": "..." },
+  "tech_stack": { "frontend": {...}, "backend": {...}, "database": {...} },
+  "database_schema": { "tables": [...], "relationships": [...] },
+  "api_endpoints": [...],
+  "business_rules": [...],
+  "features": [...],
+  "knowledge_items": { "patterns": [...], "gotchas": [...], "conventions": [...] }
+}
+```
+
+### 6.3. File session.json (Dynamic Session) ⭐ NEW
+
+Chứa thông tin thay đổi liên tục:
+
+```json
+{
+  "updated_at": "2026-01-17T18:30:00Z",
+  "working_on": {
+    "feature": "Revenue Reports",
+    "task": "Implement daily revenue chart",
+    "status": "coding",
+    "files": ["src/features/reports/components/revenue-chart.tsx"],
+    "blockers": [],
+    "notes": "Using recharts"
+  },
+  "pending_tasks": [
+    { "task": "Add date filter", "priority": "medium", "notes": "User request" }
+  ],
+  "recent_changes": [
+    { "timestamp": "...", "type": "feature", "description": "...", "files": [...] }
+  ],
+  "errors_encountered": [
+    { "error": "...", "solution": "...", "resolved": true }
+  ],
+  "decisions_made": [
+    { "decision": "Use recharts", "reason": "Better React integration" }
+  ]
+}
+```
+
+### 6.4. Quy tắc update
+
+| Trigger | File cần update |
+|---------|-----------------|
+| Thêm API mới | `brain.json` → api_endpoints |
+| Thay đổi DB | `brain.json` → database_schema |
+| Fix bug | `session.json` → errors_encountered |
+| Thêm dependency | `brain.json` → tech_stack |
+| Feature mới | `brain.json` → features |
+| Đang làm task | `session.json` → working_on |
+| Hoàn thành task | `session.json` → pending_tasks, recent_changes |
+| Cuối ngày | Cả hai |
+
+### 6.5. Các bước tạo/update
+
+**Bước 1: Update brain.json (nếu có thay đổi project)**
+- Scan `package.json` → tech_stack
+- Scan `prisma/schema.prisma` → database_schema
+- Scan `src/app/api/**` → api_endpoints
+- Scan `docs/specs/*.md` → features
+
+**Bước 2: Update session.json (luôn update)**
+- Files đã modified → recent_changes
+- Task đang làm → working_on
+- Errors gặp phải → errors_encountered
+- Quyết định đã lấy → decisions_made
+
+**Bước 3: Validate**
+- Schema: `schemas/brain.schema.json`, `schemas/session.schema.json`
+- Đảm bảo JSON hợp lệ trước khi save
+
+**Bước 4: Save**
+- `.brain/brain.json` - add vào `.gitignore` hoặc commit nếu team share
+- `.brain/session.json` - luôn trong `.gitignore` (local state)
+
+---
+
+## Giai đoạn 7: Confirmation
 
 1.  Báo cáo: "Em đã cập nhật bộ nhớ. Các file đã update:"
     *   `docs/architecture/system_overview.md`
     *   `docs/api/endpoints.md`
+    *   `.brain/brain.json` ⭐
     *   `CHANGELOG.md`
     *   ...
 2.  "Giờ đây em đã ghi nhớ kiến thức này vĩnh viễn."
 3.  "Anh có thể tắt máy yên tâm. Mai dùng `/recap` là em nhớ lại hết."
+
+### 7.1. Quick Stats
+```
+📊 Brain Stats:
+- Tables: X | APIs: Y | Features: Z
+- Pending tasks: N
+- Last updated: [timestamp]
+```
 
 ---
 
@@ -155,3 +265,33 @@ Bạn là **Antigravity Librarian**. Nhiệm vụ: Chống lại "Context Drift"
 *   Chạy `/save-brain` sau mỗi tính năng lớn
 *   Chạy `/save-brain` cuối mỗi ngày làm việc
 *   Chạy `/save-brain` trước khi nghỉ phép dài
+
+---
+
+## 🛡️ RESILIENCE PATTERNS (Ẩn khỏi User)
+
+### Khi file write fail:
+```
+1. Retry 1x sau 1s
+2. Nếu vẫn fail → Báo user:
+   "Không lưu được file 😅 Em thử lại nhé?"
+   1️⃣ Thử lại
+   2️⃣ Lưu tạm vào clipboard
+```
+
+### Khi JSON invalid:
+```
+Nếu brain.json/session.json bị corrupted:
+→ Tạo backup: brain.json.bak
+→ Tạo file mới từ template
+→ Báo user: "File cũ bị lỗi, em đã tạo mới và backup file cũ"
+```
+
+### Error messages đơn giản:
+```
+❌ "ENOENT: no such file or directory"
+✅ "Folder .brain/ chưa có, em tạo nhé!"
+
+❌ "EACCES: permission denied"
+✅ "Không có quyền ghi file. Anh kiểm tra folder permissions?"
+```

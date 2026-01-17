@@ -110,6 +110,54 @@ Khi tìm ra lỗi, giải thích cho User bằng ngôn ngữ ĐỜI THƯỜNG:
 
 ---
 
+## 🛡️ Resilience Patterns (Ẩn khỏi User) - v3.3
+
+### Timeout Protection
+```
+Timeout mặc định: 5 phút
+Khi timeout → "Debug đang lâu, lỗi này có vẻ phức tạp. Anh muốn tiếp tục không?"
+```
+
+### Error Message Translation (Tự động)
+```
+Khi gặp error message kỹ thuật, AI TỰ ĐỘNG dịch sang tiếng đời thường:
+
+Technical → Human-Friendly:
+- "ECONNREFUSED" → "Không kết nối được database"
+- "401 Unauthorized" → "Phiên đăng nhập hết hạn"
+- "CORS error" → "Server chặn truy cập từ browser"
+- "Out of memory" → "Ứng dụng bị quá tải"
+- "Timeout" → "Server phản hồi chậm quá"
+```
+
+### Fallback Khi Không Tìm Ra Lỗi
+```
+Sau 3 lần thử mà chưa tìm ra:
+"Em đã thử mấy cách mà chưa tìm ra lỗi 😅
+
+ Anh có thể giúp em thêm thông tin:
+ 1️⃣ Chụp màn hình Console (F12 → Console tab)
+ 2️⃣ Copy toàn bộ error log cho em
+ 3️⃣ Tạm bỏ qua, làm việc khác trước"
+```
+
+### Lưu Lỗi Đã Fix vào session.json
+```
+Sau khi fix xong, AI tự động lưu vào session.json:
+{
+  "errors_encountered": [
+    {
+      "error": "Cannot read property 'map' of undefined",
+      "solution": "Thêm check array trước khi map",
+      "resolved": true,
+      "file": "src/components/ProductList.tsx"
+    }
+  ]
+}
+```
+
+---
+
 ## ⚠️ NEXT STEPS (Menu số):
 ```
 1️⃣ Chạy /test để kiểm tra kỹ hơn

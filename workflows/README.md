@@ -1,4 +1,4 @@
-# 🚀 Antigravity Vibe Coding Suite v3.0 (Ultimate Edition)
+# 🚀 Antigravity Vibe Coding Suite v3.3 (Ultimate Edition)
 
 **Hệ thống Workflow TOÀN DIỆN cho Vibe Coders** - Chỉ cần có ý tưởng, AI lo trọn gói.
 
@@ -88,6 +88,130 @@
 | API Documentation | Auto-generate từ routes |
 | Changelog | Version history |
 | Business Rules | Quy tắc nghiệp vụ |
+| **Structured Context** | `.brain/brain.json` ⭐ NEW |
+
+---
+
+## 🧠 Structured Context - v3.3 (Tách brain + session)
+
+### Vấn đề v3.2
+- `brain.json` chứa cả static và dynamic data
+- Mỗi lần save phải update toàn bộ file
+- Session state lẫn với project knowledge
+
+### Giải pháp v3.3: Tách thành 2 files
+```
+.brain/                            # LOCAL (per-project)
+├── brain.json                     # 🧠 Static knowledge (ít thay đổi)
+├── session.json                   # 📍 Dynamic session (thay đổi liên tục)
+└── preferences.json               # ⚙️ Local override (nếu khác global)
+
+~/.antigravity/                    # GLOBAL (tất cả dự án)
+├── preferences.json               # Default AI preferences
+└── defaults/                      # Templates
+```
+
+### Lợi ích
+| Metric | v3.2 | v3.3 |
+|--------|------|------|
+| Files để scan | 1 (brain.json) | 2 (brain + session) |
+| Token usage | ~3KB | ~3KB (tương đương) |
+| Update frequency | Mỗi lần save | brain: khi project thay đổi, session: liên tục |
+| Scope | Local only | Local + Global preferences |
+
+### Workflow
+```
+/save-brain → Update brain.json (nếu cần) + session.json (luôn)
+/recap → Load preferences → brain.json → session.json → Summary
+/customize → Save preferences (local/global/cả hai)
+```
+
+### Schema files
+- `schemas/brain.schema.json` - Project knowledge
+- `schemas/session.schema.json` - Session state ⭐ NEW
+- `schemas/preferences.schema.json` - User preferences ⭐ NEW
+
+### Template files
+- `templates/brain.example.json`
+- `templates/session.example.json` ⭐ NEW
+- `templates/preferences.example.json` ⭐ NEW
+
+### brain.json (Static - ít thay đổi)
+- `project`: Tên, loại, status
+- `tech_stack`: Frontend, Backend, DB, Dependencies
+- `database_schema`: Tables, Relationships
+- `api_endpoints`: Routes với auth info
+- `business_rules`: Quy tắc nghiệp vụ
+- `features`: Tính năng và trạng thái
+- `knowledge_items`: Patterns, Gotchas, Conventions
+
+### session.json (Dynamic - thay đổi liên tục) ⭐ NEW
+- `working_on`: Feature, task, status, files đang sửa
+- `pending_tasks`: Việc cần làm tiếp
+- `recent_changes`: Thay đổi gần đây
+- `errors_encountered`: Lỗi gặp và cách fix
+- `decisions_made`: Quyết định đã lấy trong session
+
+### preferences.json (User settings) ⭐ NEW
+- `communication`: Tone, persona
+- `technical`: Detail level, autonomy, quality
+- `working_style`: Pace, feedback style
+- `custom_rules`: Quy tắc riêng của user
+
+---
+
+## 🛡️ Resilience Patterns - v3.3 (Ẩn khỏi User)
+
+> **Nguyên tắc:** User không cần biết về retry, timeout, fallback. AI xử lý ngầm.
+
+### Auto-Retry (Ẩn)
+```
+Khi gặp lỗi transient (network, rate limit):
+1. Retry lần 1 (đợi 1s)
+2. Retry lần 2 (đợi 2s)
+3. Retry lần 3 (đợi 4s)
+4. Nếu vẫn fail → Báo user bằng tiếng đơn giản
+```
+
+### Timeout Protection (Ẩn)
+```
+Mỗi task có timeout mặc định:
+- /code: 5 phút
+- /deploy: 10 phút
+- /debug: 5 phút
+- Khác: 3 phút
+
+Khi timeout → "Việc này đang lâu quá, anh muốn tiếp tục không?"
+```
+
+### Fallback Conversation (Hiển thị khi cần)
+```
+Thay vì syntax phức tạp như: /deploy production || staging
+
+AI hỏi bằng tiếng Việt:
+"Deploy lên production không được 😅
+ Anh muốn thử staging trước không?
+ 1️⃣ Có - Deploy staging
+ 2️⃣ Không - Em xem lại lỗi"
+```
+
+### Error Messages (Đơn giản hóa)
+```
+❌ Cũ: "Error: ECONNREFUSED 127.0.0.1:5432 - Connection refused"
+
+✅ Mới: "Không kết nối được database 😅
+        Anh kiểm tra xem PostgreSQL đang chạy chưa nhé!
+        Gõ /debug nếu cần em hỗ trợ."
+```
+
+### Error Categories
+| Loại lỗi | AI xử lý | User thấy |
+|----------|----------|-----------|
+| Network timeout | Auto-retry 3x | Không thấy gì (nếu thành công) |
+| Rate limit | Đợi và retry | "Đang chờ API..." |
+| Auth failed | Báo ngay | "Cần kiểm tra lại credentials" |
+| Code syntax | Gợi ý fix | "Có lỗi ở file X, gõ /debug" |
+| Build failed | Phân tích log | "Build lỗi vì Y, em đề xuất..." |
 
 ---
 
@@ -115,7 +239,7 @@
 
 ---
 
-## 📊 Thống kê hệ thống v3.0
+## 📊 Thống kê hệ thống v3.3
 
 | Workflow | Size | Chất lượng |
 |----------|------|------------|
@@ -148,4 +272,4 @@
 
 ---
 
-*Antigravity Vibe Coding Suite v3.0 - Your dreams, our engineering.*
+*Antigravity Vibe Coding Suite v3.3 - Your dreams, our engineering.*

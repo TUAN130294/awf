@@ -232,16 +232,63 @@ Anh cứ liệt kê, em sẽ nhớ hết!"
 💬 Feedback: [Lựa chọn]
 
 📝 Custom Rules:
-[Liệt kê các yêu cầu đặc biệt nếu có]
+[Liệt kê các yêu cầu đặc biệt nếu có]"
+```
 
-Em sẽ nhớ và áp dụng cho toàn bộ dự án!
+### 5.2. Chọn phạm vi áp dụng
+```
+"💾 **LƯU SETTINGS Ở ĐÂU?**
+
+1️⃣ **Chỉ dự án này** (Recommended cho người mới)
+   - Lưu vào folder dự án
+   - Chỉ áp dụng khi làm việc ở đây
+   - Mỗi dự án có thể khác nhau
+
+2️⃣ **Tất cả dự án (Global)**
+   - Lưu làm mặc định cho mọi dự án mới
+   - Tiện nếu anh muốn style thống nhất
+
+3️⃣ **Cả hai**
+   - Global làm mặc định
+   - Dự án này có thể khác nếu cần"
+```
+
+### 5.3. Xử lý lưu trữ
+
+**Nếu chọn 1 (Project only):**
+*   Lưu vào `.brain/preferences.json`
+*   Chỉ áp dụng trong dự án hiện tại
+
+**Nếu chọn 2 (Global):**
+*   Windows: Lưu vào `%USERPROFILE%\.antigravity\preferences.json`
+*   Mac/Linux: Lưu vào `~/.antigravity/preferences.json`
+*   Áp dụng cho tất cả dự án mới
+*   **Auto-create folder nếu chưa có:**
+    - Windows: `mkdir %USERPROFILE%\.antigravity`
+    - Mac/Linux: `mkdir -p ~/.antigravity`
+
+**Nếu chọn 3 (Cả hai):**
+*   Lưu cả 2 vị trí
+*   Local override Global khi có conflict
+
+### 5.4. Xác nhận
+```
+"✅ Đã lưu settings!
+
+📍 Vị trí: [Project / Global / Cả hai]
+
+Em sẽ nhớ và áp dụng từ giờ!
 Muốn thay đổi? Gõ /customize bất cứ lúc nào."
 ```
 
-### 5.2. Lưu vào Context
-*   Lưu preferences vào session context
-*   Áp dụng cho tất cả các workflow sau
-*   Nhắc lại khi cần (VD: "Theo settings, anh muốn em giải thích đơn giản...")
+### 5.5. Logic load preferences (cho AI)
+```
+Khi bắt đầu session:
+1. Đọc Global preferences (nếu có)
+2. Đọc Local preferences (nếu có)
+3. Merge: Local override Global
+4. Áp dụng vào context
+```
 
 ---
 
@@ -260,3 +307,40 @@ Muốn thay đổi? Gõ /customize bất cứ lúc nào."
 - Nếu có `/customize` đã lưu → Áp dụng ngay
 - Nếu chưa có → Dùng settings mặc định
 - User có thể chạy `/customize` bất cứ lúc nào để thay đổi
+
+---
+
+## 🛡️ RESILIENCE PATTERNS (Ẩn khỏi User)
+
+### Khi lưu file fail:
+```
+1. Auto-retry 1x
+2. Nếu vẫn fail → Báo user:
+   "Không lưu được settings 😅"
+   1️⃣ Thử lại
+   2️⃣ Lưu tạm trong session (mất khi đóng)
+```
+
+### Khi global folder không tạo được:
+```
+Nếu ~/.antigravity không tạo được:
+→ Fallback: Chỉ lưu local (.brain/preferences.json)
+→ Báo: "Em lưu local thôi nhé, global không tạo được folder"
+```
+
+### Khi preferences.json corrupted:
+```
+Nếu JSON invalid:
+→ Backup file cũ: preferences.json.bak
+→ Tạo mới với default values
+→ Báo: "File cũ bị lỗi, em tạo mới nhé!"
+```
+
+### Error messages đơn giản:
+```
+❌ "EACCES: permission denied"
+✅ "Không có quyền tạo folder. Em lưu local thôi nhé!"
+
+❌ "ENOSPC: no space left on device"
+✅ "Hết dung lượng ổ đĩa. Anh dọn bớt files nhé!"
+```

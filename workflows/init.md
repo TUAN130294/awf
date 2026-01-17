@@ -83,11 +83,20 @@ AI TỰ ĐỘNG thiết lập những thứ quan trọng mà User thường quê
     /docs
       /specs
       /architecture
+    /.brain                    # ⭐ NEW - AI context storage
+      /brain.json              # Project knowledge (static)
+      /session.json            # Session state (dynamic)
     /scripts
     /public
     ```
 
-### 3.5. README.md
+### 3.5. .brain/ Folder Setup ⭐ NEW
+*   Tạo folder `.brain/` cho AI context
+*   Tạo file `.brain/brain.json` với template cơ bản
+*   Thêm `.brain/session.json` vào `.gitignore` (local state)
+*   Optionally: commit `.brain/brain.json` nếu team muốn share context
+
+### 3.6. README.md
 *   Tạo README với hướng dẫn:
     *   Cách cài đặt
     *   Cách chạy dev server
@@ -158,4 +167,35 @@ AI TỰ ĐỘNG thiết lập những thứ quan trọng mà User thường quê
 1️⃣ Bắt đầu tính năng đầu tiên? /plan
 2️⃣ Thiết kế UI trước? /visualize
 3️⃣ Chạy thử app? /run
+```
+
+---
+
+## 🛡️ RESILIENCE PATTERNS (Ẩn khỏi User)
+
+### Khi npm install fail:
+```
+1. Auto-retry 1x
+2. Nếu vẫn fail → Báo user:
+   "Cài đặt bị lỗi 😅 Có thể do mạng. Thử lại?"
+   1️⃣ Thử lại
+   2️⃣ Skip, em cài sau
+```
+
+### Khi git init fail:
+```
+Nếu folder đã có .git:
+→ "Folder này đã có Git rồi, em skip bước này nhé!"
+
+Nếu permission denied:
+→ "Không tạo được Git. Anh có quyền write folder này không?"
+```
+
+### Error messages đơn giản:
+```
+❌ "npm ERR! ERESOLVE could not resolve"
+✅ "Có conflict giữa các package. Em thử fix tự động nhé?"
+
+❌ "EACCES: permission denied"
+✅ "Không có quyền tạo folder. Anh chạy lại với quyền admin?"
 ```

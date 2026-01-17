@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://awf.dev/schemas/session.schema.json",
+  "title": "AWF Session State Schema",
+  "description": "Dynamic session state - changes frequently during work sessions",
+  "version": "1.0.0",
+  "type": "object",
+  "required": ["updated_at"],
+  "properties": {
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    },
+    "working_on": {
+      "type": "object",
+      "description": "Current work in progress",
+      "properties": {
+        "feature": { "type": "string", "description": "Feature name" },
+        "task": { "type": "string", "description": "Current task" },
+        "status": {
+          "type": "string",
+          "enum": ["planning", "coding", "testing", "debugging", "reviewing"],
+          "description": "Task status"
+        },
+        "files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files being modified"
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Current blockers"
+        },
+        "notes": { "type": "string", "description": "Quick notes" }
+      }
+    },
+    "pending_tasks": {
+      "type": "array",
+      "description": "Tasks to do next",
+      "items": {
+        "type": "object",
+        "properties": {
+          "task": { "type": "string" },
+          "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+          "notes": { "type": "string" }
+        },
+        "required": ["task", "priority"]
+      }
+    },
+    "recent_changes": {
+      "type": "array",
+      "description": "Recent changes in this session",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": { "type": "string", "format": "date-time" },
+          "type": { "type": "string", "enum": ["feature", "bugfix", "refactor", "config", "docs"] },
+          "description": { "type": "string" },
+          "files": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "errors_encountered": {
+      "type": "array",
+      "description": "Errors encountered and solutions",
+      "items": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" },
+          "solution": { "type": "string" },
+          "resolved": { "type": "boolean" }
+        }
+      }
+    },
+    "decisions_made": {
+      "type": "array",
+      "description": "Technical decisions made this session",
+      "items": {
+        "type": "object",
+        "properties": {
+          "decision": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    }
+  }
+}

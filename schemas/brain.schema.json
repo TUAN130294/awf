@@ -1,0 +1,298 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://awf.dev/schemas/brain.schema.json",
+  "title": "AWF Brain Context Schema",
+  "description": "Static project knowledge - tech stack, DB schema, APIs, features. Session state moved to session.json",
+  "version": "1.1.0",
+  "type": "object",
+  "required": ["meta", "project", "updated_at"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "description": "Schema metadata",
+      "properties": {
+        "schema_version": { "type": "string", "default": "1.0.0" },
+        "awf_version": { "type": "string" },
+        "created_at": { "type": "string", "format": "date-time" },
+        "updated_at": { "type": "string", "format": "date-time" }
+      },
+      "required": ["schema_version", "awf_version"]
+    },
+    "project": {
+      "type": "object",
+      "description": "Project overview",
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "type": {
+          "type": "string",
+          "enum": ["website", "webapp", "api", "fullstack", "mobile"]
+        },
+        "status": {
+          "type": "string",
+          "enum": ["planning", "development", "testing", "production", "maintenance"]
+        },
+        "repository": { "type": "string" },
+        "urls": {
+          "type": "object",
+          "properties": {
+            "local": { "type": "string" },
+            "staging": { "type": "string" },
+            "production": { "type": "string" }
+          }
+        }
+      },
+      "required": ["name", "type"]
+    },
+    "tech_stack": {
+      "type": "object",
+      "description": "Technology stack",
+      "properties": {
+        "frontend": {
+          "type": "object",
+          "properties": {
+            "framework": { "type": "string" },
+            "language": { "type": "string" },
+            "ui_library": { "type": "string" },
+            "state_management": { "type": "string" },
+            "styling": { "type": "string" }
+          }
+        },
+        "backend": {
+          "type": "object",
+          "properties": {
+            "framework": { "type": "string" },
+            "language": { "type": "string" },
+            "runtime": { "type": "string" }
+          }
+        },
+        "database": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string" },
+            "orm": { "type": "string" },
+            "name": { "type": "string" }
+          }
+        },
+        "infrastructure": {
+          "type": "object",
+          "properties": {
+            "hosting": { "type": "string" },
+            "cdn": { "type": "string" },
+            "ci_cd": { "type": "string" }
+          }
+        },
+        "dependencies": {
+          "type": "array",
+          "description": "Key dependencies (not exhaustive, only notable ones)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "version": { "type": "string" },
+              "purpose": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "architecture": {
+      "type": "object",
+      "description": "System architecture overview",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "description": "e.g., MVC, Clean Architecture, Microservices"
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "path": { "type": "string" },
+              "responsibility": { "type": "string" },
+              "dependencies": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "external_services": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "purpose": { "type": "string" },
+              "env_vars": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "database_schema": {
+      "type": "object",
+      "description": "Database structure",
+      "properties": {
+        "tables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "columns": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string" },
+                    "nullable": { "type": "boolean" },
+                    "primary": { "type": "boolean" },
+                    "foreign_key": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "relationships": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "from": { "type": "string" },
+              "to": { "type": "string" },
+              "type": { "type": "string", "enum": ["one-to-one", "one-to-many", "many-to-many"] },
+              "description": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "api_endpoints": {
+      "type": "array",
+      "description": "API routes summary",
+      "items": {
+        "type": "object",
+        "properties": {
+          "method": { "type": "string", "enum": ["GET", "POST", "PUT", "PATCH", "DELETE"] },
+          "path": { "type": "string" },
+          "description": { "type": "string" },
+          "auth_required": { "type": "boolean" },
+          "roles": { "type": "array", "items": { "type": "string" } },
+          "request_body": { "type": "object" },
+          "response": { "type": "object" }
+        }
+      }
+    },
+    "business_rules": {
+      "type": "array",
+      "description": "Business logic rules",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "domain": { "type": "string" },
+          "rule": { "type": "string" },
+          "implementation": { "type": "string" },
+          "exceptions": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "features": {
+      "type": "array",
+      "description": "Implemented features",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["planned", "in_progress", "implemented", "tested", "deployed"]
+          },
+          "spec_file": { "type": "string" },
+          "files": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "knowledge_items": {
+      "type": "object",
+      "description": "Learned patterns and gotchas",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "description": "Coding patterns used in this project",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "example_file": { "type": "string" }
+            }
+          }
+        },
+        "gotchas": {
+          "type": "array",
+          "description": "Known issues and workarounds",
+          "items": {
+            "type": "object",
+            "properties": {
+              "issue": { "type": "string" },
+              "cause": { "type": "string" },
+              "solution": { "type": "string" },
+              "affected_files": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "conventions": {
+          "type": "array",
+          "description": "Project-specific conventions",
+          "items": {
+            "type": "object",
+            "properties": {
+              "area": { "type": "string" },
+              "convention": { "type": "string" },
+              "example": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "description": "Environment configuration",
+      "properties": {
+        "variables": {
+          "type": "array",
+          "description": "Required env vars (values NOT stored, only names)",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": { "type": "string" },
+              "description": { "type": "string" },
+              "required": { "type": "boolean" },
+              "example": { "type": "string" }
+            }
+          }
+        },
+        "scripts": {
+          "type": "object",
+          "description": "Common npm scripts",
+          "properties": {
+            "dev": { "type": "string" },
+            "build": { "type": "string" },
+            "test": { "type": "string" },
+            "lint": { "type": "string" }
+          }
+        }
+      }
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last update timestamp"
+    }
+  }
+}

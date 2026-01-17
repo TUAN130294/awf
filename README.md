@@ -1,4 +1,4 @@
-# 🚀 AWF - Antigravity Workflow Framework v3.2
+# 🚀 AWF - Antigravity Workflow Framework v3.3
 
 **The Operating System for Vibe Coders & AI Engineers.**
 *Hệ điều hành dành cho Vibe Coder và Kỹ sư AI.*
@@ -33,7 +33,7 @@
 
 ---
 
-## ✅ The Solution: AWF 3.2
+## ✅ The Solution: AWF 3.3
 
 **AWF is a suite of 17 Global Workflows for everyone - from beginners to pros.**
 *AWF là bộ 17 lệnh Global cho mọi người - từ người mới đến chuyên gia.*
@@ -51,8 +51,8 @@
     *Cấm code khi chưa có kế hoạch.*
 *   **Safety First**: Auto-check security before coding (`/code`).
     *Tự động kiểm tra bảo mật.*
-*   **Infinite Memory**: Save context to `.brain` file (`/save-brain`).
-    *Lưu ngữ cảnh vào file não bộ vĩnh cửu.*
+*   **Infinite Memory**: Save context to `.brain/brain.json` (`/save-brain`).
+    *Lưu ngữ cảnh vào file JSON có cấu trúc - AI parse nhanh, tiết kiệm token.*
 
 ---
 
@@ -237,4 +237,4 @@ AI: "Em tổng hợp lại:
 ---
 
 *Built by Antigravity in Vibe Coding Mode.*
-*AWF v3.2 - For everyone, from beginners to pros.*
+*AWF v3.3 - For everyone, from beginners to pros.*

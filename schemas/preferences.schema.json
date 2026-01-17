@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://awf.dev/schemas/preferences.schema.json",
+  "title": "AWF User Preferences Schema",
+  "description": "User preferences for AI communication and working style",
+  "version": "1.0.0",
+  "type": "object",
+  "properties": {
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "communication": {
+      "type": "object",
+      "description": "How AI communicates",
+      "properties": {
+        "tone": {
+          "type": "string",
+          "enum": ["friendly", "professional", "casual", "custom"],
+          "default": "friendly",
+          "description": "Tone of voice"
+        },
+        "tone_custom": {
+          "type": "string",
+          "description": "Custom tone description if tone=custom"
+        },
+        "persona": {
+          "type": "string",
+          "enum": ["assistant", "mentor", "senior_dev", "partner", "coach", "custom"],
+          "default": "assistant",
+          "description": "AI personality"
+        },
+        "persona_custom": {
+          "type": "string",
+          "description": "Custom persona description if persona=custom"
+        }
+      }
+    },
+    "technical": {
+      "type": "object",
+      "description": "Technical detail preferences",
+      "properties": {
+        "detail_level": {
+          "type": "string",
+          "enum": ["results_only", "simple", "learning", "full_technical"],
+          "default": "simple",
+          "description": "How much technical detail to show"
+        },
+        "autonomy": {
+          "type": "string",
+          "enum": ["ask_often", "balanced", "autonomous"],
+          "default": "ask_often",
+          "description": "How much AI decides on its own"
+        },
+        "quality": {
+          "type": "string",
+          "enum": ["mvp", "production", "enterprise"],
+          "default": "production",
+          "description": "Output quality level"
+        }
+      }
+    },
+    "working_style": {
+      "type": "object",
+      "description": "How to work together",
+      "properties": {
+        "pace": {
+          "type": "string",
+          "enum": ["careful", "fast"],
+          "default": "careful",
+          "description": "Work pace preference"
+        },
+        "feedback": {
+          "type": "string",
+          "enum": ["gentle", "direct", "silent"],
+          "default": "gentle",
+          "description": "How AI gives feedback"
+        }
+      }
+    },
+    "custom_rules": {
+      "type": "array",
+      "description": "User-defined custom rules",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
