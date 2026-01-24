@@ -47,7 +47,7 @@
 |-------|-----------|
 | awf-session-restore | Nhớ context giữa các session |
 | awf-adaptive-language | Điều chỉnh ngôn ngữ theo trình độ |
-| awf-error-translator | Dịch 50+ lỗi sang tiếng người |
+| awf-error-translator | Dịch 50+ lỗi sang ngôn ngữ dễ hiểu |
 | awf-onboarding | Hướng dẫn user mới |
 | awf-context-help | Trợ giúp thông minh theo context |
 
