@@ -93,8 +93,24 @@ iex "& { $(irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1
 curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | sh
 ```
 
-> **Restart your IDE after installation.**  
+> **Restart your IDE after installation.**
 > *Khởi động lại Antigravity/Cursor sau khi cài.*
+
+### 🗑️ Uninstall (Gỡ cài đặt)
+
+**Windows (PowerShell):**
+```powershell
+Remove-Item -Recurse -Force "$env:USERPROFILE\.gemini\antigravity"
+Remove-Item -Force "$env:USERPROFILE\.gemini\awf_version"
+# Optional: Remove AWF section from GEMINI.md manually
+```
+
+**Mac/Linux:**
+```bash
+rm -rf ~/.gemini/antigravity
+rm -f ~/.gemini/awf_version
+# Optional: Remove AWF section from GEMINI.md manually
+```
 
 ---
 
