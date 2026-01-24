@@ -2,6 +2,41 @@
 
 All notable changes to AWF will be documented in this file.
 
+## [4.0.0] - 2026-01-24
+
+### Added - Foundation Skills (Phase 01)
+
+**Core Foundation Skills:**
+- **`awf-session-restore` skill** - Auto-restore session context on workflow start
+  - Activates as pre-hook for ALL AWF workflows
+  - Loads `.brain/session.json` and displays brief summary
+  - Performance: < 500ms load time
+  - Falls back gracefully if session file missing/corrupted
+
+- **`awf-adaptive-language` skill** - Adjust terminology by technical level
+  - Reads `technical_level` from preferences.json (newbie/basic/technical)
+  - Newbie: Explains all jargon with everyday examples
+  - Basic: First mention + explanation, then plain terminology
+  - Technical: Standard technical terms, no explanations
+  - Operates silently (no indicator shown to user)
+  - Performance: < 100ms load, cached for session
+
+**Schema Enhancements:**
+- `preferences.schema.json` v2.0.0 - Added `technical.technical_level` field
+- Enables language adaptation for all user skill levels
+- Global + Local override strategy maintained
+
+### Benefits
+- **Better UX for Beginners**: Jargon automatically explained based on level
+- **Faster Context Recovery**: Session auto-loads in < 1 second
+- **Non-Intrusive**: Both skills work silently in background
+- **Scalable**: Foundation for Phase 02 (UI Skills), Phase 03 (Code Skills)
+
+### Breaking Changes
+- None. v4.0 is fully backward compatible with v3.4
+
+---
+
 ## [3.4.0] - 2026-01-17
 
 ### Added - Auto Workflow System

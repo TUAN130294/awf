@@ -1,7 +1,18 @@
 # 📖 AWF User Guide - Hướng dẫn sử dụng cho người mới
 
-> **AWF (Antigravity Workflow Framework)** giúp bạn làm app mà không cần biết code.
+> **AWF (Antigravity Workflow Framework) v4.0** giúp bạn làm app mà không cần biết code.
 > Bạn chỉ cần nói ý tưởng, AI sẽ lo phần còn lại.
+>
+> **v4.0 Features:** Auto session restore • Adaptive language for all levels • 17+ workflows
+
+---
+
+## ✨ What's New in v4.0?
+
+**Foundation Skills (Phase 01):**
+- **🔄 Auto Session Restore** - AI automatically remembers what you were doing when you come back. No need to brief AI again!
+- **🌐 Adaptive Language** - Terminology adjusts to your technical level (newbie/basic/technical). AI explains jargon for beginners, uses technical terms for pros.
+- **📋 Enhanced Preferences** - Set your communication style, technical level, and working pace once - AI adapts to you.
 
 ---
 

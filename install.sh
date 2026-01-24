@@ -20,10 +20,20 @@ TEMPLATES=(
     "brain.example.json" "session.example.json" "preferences.example.json"
 )
 
+# AWF Skills (v4.0+)
+AWF_SKILLS=(
+    "awf-session-restore"
+    "awf-adaptive-language"
+    "awf-error-translator"
+    "awf-onboarding"
+    "awf-context-help"
+)
+
 # Detect paths
 ANTIGRAVITY_GLOBAL="$HOME/.gemini/antigravity/global_workflows"
 SCHEMAS_DIR="$HOME/.gemini/antigravity/schemas"
 TEMPLATES_DIR="$HOME/.gemini/antigravity/templates"
+SKILLS_DIR="$HOME/.gemini/antigravity/skills"
 GEMINI_MD="$HOME/.gemini/GEMINI.md"
 AWF_VERSION_FILE="$HOME/.gemini/awf_version"
 
@@ -83,12 +93,24 @@ for template in "${TEMPLATES[@]}"; do
     fi
 done
 
-# 4. Save version
+# 4. Download AWF Skills (v4.0+)
+echo "⏳ Đang tải skills (v4.0+)..."
+for skill in "${AWF_SKILLS[@]}"; do
+    mkdir -p "$SKILLS_DIR/$skill"
+    if curl -f -s -o "$SKILLS_DIR/$skill/SKILL.md" "$REPO_BASE/awf_skills/$skill/SKILL.md"; then
+        echo "   ✅ $skill"
+        ((success++))
+    else
+        echo "   ❌ $skill"
+    fi
+done
+
+# 5. Save version
 mkdir -p "$HOME/.gemini"
 echo "$CURRENT_VERSION" > "$AWF_VERSION_FILE"
 echo "✅ Đã lưu version: $CURRENT_VERSION"
 
-# 5. Update Global Rules
+# 6. Update Global Rules
 AWF_INSTRUCTIONS='
 # AWF - Antigravity Workflow Framework
 
@@ -118,9 +140,21 @@ Bạn PHẢI đọc file workflow tương ứng và thực hiện theo hướng 
 | `/cloudflare-tunnel` | ~/.gemini/antigravity/global_workflows/cloudflare-tunnel.md | Quản lý tunnel |
 | `/awf-update` | ~/.gemini/antigravity/global_workflows/awf-update.md | Cập nhật AWF |
 
-## Resource Locations (v3.3+):
+## Resource Locations (v4.0+):
 - Schemas: ~/.gemini/antigravity/schemas/
 - Templates: ~/.gemini/antigravity/templates/
+- Skills: ~/.gemini/antigravity/skills/
+
+## AWF Skills (v4.0 - Auto-activate):
+Skills là helper ẩn, tự động kích hoạt khi cần. User KHÔNG cần gọi trực tiếp.
+
+| Skill | Trigger | Chức năng |
+|-------|---------|-----------|
+| awf-session-restore | Đầu mỗi session | Tự động khôi phục context |
+| awf-adaptive-language | Đầu mỗi session | Điều chỉnh ngôn ngữ theo trình độ user |
+| awf-error-translator | Khi có lỗi | Dịch lỗi kỹ thuật sang tiếng đời thường |
+| awf-onboarding | /init lần đầu | Hướng dẫn user mới |
+| awf-context-help | /help hoặc ? | Trợ giúp thông minh theo context |
 
 ## Hướng dẫn thực hiện:
 1. Khi user gõ một trong các commands trên, ĐỌC FILE WORKFLOW tương ứng
@@ -157,6 +191,7 @@ echo ""
 echo "📂 Workflows: $ANTIGRAVITY_GLOBAL"
 echo "📂 Schemas:   $SCHEMAS_DIR"
 echo "📂 Templates: $TEMPLATES_DIR"
+echo "📂 Skills:    $SKILLS_DIR"
 echo ""
 echo "👉 Bạn có thể dùng AWF ở BẤT KỲ project nào ngay lập tức!"
 echo "👉 Thử gõ '/plan' để kiểm tra."

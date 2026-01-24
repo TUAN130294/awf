@@ -1,10 +1,12 @@
-# 🚀 AWF - Antigravity Workflow Framework v3.4
+# 🚀 AWF - Antigravity Workflow Framework v4.0
 
 **The Operating System for Vibe Coders & AI Engineers.**
 *Hệ điều hành dành cho Vibe Coder và Kỹ sư AI.*
 
 *Turn your ideas into apps without coding knowledge. AI handles everything.*
 *Biến ý tưởng thành App mà không cần biết code. AI lo trọn gói.*
+
+**v4.0 Phase 01:** Auto session restore · Adaptive language for all levels · 17+ foundation workflows
 
 [![Website](https://img.shields.io/badge/Website-Live_Demo-cyan?style=for-the-badge)](https://awfweb.pages.dev/)
 [![Install Global](https://img.shields.io/badge/Install-Global-blue?style=for-the-badge)](#-installation-global)
@@ -33,10 +35,15 @@
 
 ---
 
-## ✅ The Solution: AWF 3.4
+## ✅ The Solution: AWF 4.0
 
-**AWF is a suite of 17 Global Workflows for everyone - from beginners to pros.**
-*AWF là bộ 17 lệnh Global cho mọi người - từ người mới đến chuyên gia.*
+**AWF is a suite of 17+ Global Workflows for everyone - from beginners to pros.**
+*AWF là bộ 17+ lệnh Global cho mọi người - từ người mới đến chuyên gia.*
+
+**What's New in v4.0 Phase 01:**
+- Auto session restore (your context is remembered automatically)
+- Adaptive language (AI explains jargon for beginners, uses tech terms for pros)
+- Enhanced preferences for personalization
 
 ### For Beginners (Dành cho người mới):
 *   **Brainstorm First**: Discuss ideas, research market, clarify vision (`/brainstorm`).
@@ -237,4 +244,5 @@ AI: "Em tổng hợp lại:
 ---
 
 *Built by Antigravity in Vibe Coding Mode.*
-*AWF v3.4 - For everyone, from beginners to pros.*
+*AWF v4.0 - For everyone, from beginners to pros.*
+*Phase 01 Foundation Skills: Auto session restore · Adaptive language · 17+ workflows*

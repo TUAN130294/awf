@@ -19,10 +19,20 @@ $Templates = @(
     "brain.example.json", "session.example.json", "preferences.example.json"
 )
 
+# AWF Skills (v4.0+)
+$AwfSkills = @(
+    "awf-session-restore",
+    "awf-adaptive-language",
+    "awf-error-translator",
+    "awf-onboarding",
+    "awf-context-help"
+)
+
 # Detect Antigravity Global Path
 $AntigravityGlobal = "$env:USERPROFILE\.gemini\antigravity\global_workflows"
 $SchemasDir = "$env:USERPROFILE\.gemini\antigravity\schemas"
 $TemplatesDir = "$env:USERPROFILE\.gemini\antigravity\templates"
+$SkillsDir = "$env:USERPROFILE\.gemini\antigravity\skills"
 $GeminiMd = "$env:USERPROFILE\.gemini\GEMINI.md"
 $AwfVersionFile = "$env:USERPROFILE\.gemini\awf_version"
 
@@ -97,7 +107,23 @@ foreach ($template in $Templates) {
     }
 }
 
-# 4. Save version
+# 4. Download AWF Skills (v4.0+)
+Write-Host "⏳ Đang tải skills (v4.0+)..." -ForegroundColor Cyan
+foreach ($skill in $AwfSkills) {
+    $skillDir = "$SkillsDir\$skill"
+    if (-not (Test-Path $skillDir)) {
+        New-Item -ItemType Directory -Force -Path $skillDir | Out-Null
+    }
+    try {
+        Invoke-WebRequest -Uri "$RepoBase/awf_skills/$skill/SKILL.md" -OutFile "$skillDir\SKILL.md" -ErrorAction Stop
+        Write-Host "   ✅ $skill" -ForegroundColor Green
+        $success++
+    } catch {
+        Write-Host "   ❌ $skill" -ForegroundColor Red
+    }
+}
+
+# 5. Save version
 if (-not (Test-Path "$env:USERPROFILE\.gemini")) {
     New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.gemini" | Out-Null
 }
@@ -135,9 +161,26 @@ Bạn PHẢI đọc file workflow tương ứng và thực hiện theo hướng 
 | ``/cloudflare-tunnel`` | ~/.gemini/antigravity/global_workflows/cloudflare-tunnel.md | Quản lý tunnel |
 | ``/awf-update`` | ~/.gemini/antigravity/global_workflows/awf-update.md | Cập nhật AWF |
 
-## Resource Locations (v3.3+):
+## Resource Locations (v4.0+):
 - Schemas: ~/.gemini/antigravity/schemas/
 - Templates: ~/.gemini/antigravity/templates/
+- Skills: ~/.gemini/antigravity/skills/
+
+## AWF Skills (v4.0 - Auto-activate):
+Skills là helper ẩn, tự động kích hoạt khi cần. User KHÔNG cần gọi trực tiếp.
+
+| Skill | Trigger | Chức năng |
+|-------|---------|-----------|
+| awf-session-restore | Đầu mỗi session | Tự động khôi phục context |
+| awf-adaptive-language | Đầu mỗi session | Điều chỉnh ngôn ngữ theo trình độ user |
+| awf-error-translator | Khi có lỗi | Dịch lỗi kỹ thuật sang tiếng đời thường |
+| awf-onboarding | /init lần đầu | Hướng dẫn user mới |
+| awf-context-help | /help hoặc ? | Trợ giúp thông minh theo context |
+
+**Cách hoạt động:**
+1. Đọc ~/.brain/preferences.json để lấy technical_level (newbie/basic/technical)
+2. Điều chỉnh ngôn ngữ trong workflows theo level
+3. Skills tự động trigger, user không cần biết
 
 ## Hướng dẫn thực hiện:
 1. Khi user gõ một trong các commands trên, ĐỌC FILE WORKFLOW tương ứng
@@ -178,6 +221,7 @@ Write-Host ""
 Write-Host "📂 Workflows: $AntigravityGlobal" -ForegroundColor DarkGray
 Write-Host "📂 Schemas:   $SchemasDir" -ForegroundColor DarkGray
 Write-Host "📂 Templates: $TemplatesDir" -ForegroundColor DarkGray
+Write-Host "📂 Skills:    $SkillsDir" -ForegroundColor DarkGray
 Write-Host ""
 Write-Host "👉 Bạn có thể dùng AWF ở BẤT KỲ project nào ngay lập tức!" -ForegroundColor Cyan
 Write-Host "👉 Thử gõ '/plan' để kiểm tra." -ForegroundColor White
