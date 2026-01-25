@@ -226,5 +226,3 @@ Write-Host "👉 Bạn có thể dùng AWF ở BẤT KỲ project nào ngay lậ
 Write-Host "👉 Thử gõ '/plan' để kiểm tra." -ForegroundColor White
 Write-Host "👉 Kiểm tra update: '/awf-update'" -ForegroundColor White
 Write-Host ""
-
-# Done - no exit to avoid closing PowerShell when run via iex
