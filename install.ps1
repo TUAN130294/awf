@@ -1,4 +1,4 @@
-﻿# AWF Installer for Windows (PowerShell)
+# AWF Installer for Windows (PowerShell)
 # Tự động detect Antigravity Global Workflows
 
 $RepoBase = "https://raw.githubusercontent.com/TUAN130294/awf/main"
