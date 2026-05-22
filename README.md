@@ -5,7 +5,7 @@
 > **Framework mở rộng cho Antigravity Agent.**
 > Biến AI của bạn thành một đội ngũ chuyên nghiệp (PM, Designer, Coder) với quy trình làm việc chuẩn.
 
-[![Version](https://img.shields.io/badge/version-4.1.0-blue.svg)](https://github.com/TUAN130294/awf)
+[![Version](https://img.shields.io/badge/version-4.1.2-blue.svg)](https://github.com/TUAN130294/awf)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/Website-awfweb.pages.dev-8b5cf6.svg)](https://awfweb.pages.dev/)
 
@@ -25,23 +25,47 @@
 ## 🚀 Cài Đặt (Chỉ 1 Lệnh)
 
 ### Windows (PowerShell)
-Mở Terminal (**Ctrl + `**) và dán:
+Chọn phiên bản phù hợp với Antigravity của bạn:
 
-```powershell
-irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1 | iex
-```
+* **Cho Antigravity v2.0+ (Khuyên dùng - Chuẩn Skill mới)**:
+  ```powershell
+  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1))) -Version 2.0
+  ```
 
-### macOS / Linux
-```bash
-curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | sh
-```
+* **Cho Antigravity v1.0 (Chuẩn Global cũ)**:
+  ```powershell
+  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1))) -Version 1.0
+  ```
 
-**Xong!** ✅ AWF sẽ tự động tải và cấu hình vào Antigravity.
+* **Cài đặt cả hai (Tương thích tối đa / Mặc định)**:
+  ```powershell
+  irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1 | iex
+  ```
 
 > ⚠️ **Windows: Gặp lỗi ExecutionPolicy?** Chạy lệnh này trước:
 > ```powershell
 > Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 > ```
+
+### macOS / Linux
+Chọn phiên bản phù hợp với Antigravity của bạn:
+
+* **Cho Antigravity v2.0+ (Khuyên dùng - Chuẩn Skill mới)**:
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | bash -s -- -v 2.0
+  ```
+
+* **Cho Antigravity v1.0 (Chuẩn Global cũ)**:
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | bash -s -- -v 1.0
+  ```
+
+* **Cài đặt cả hai (Tương thích tối đa / Mặc định)**:
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | bash
+  ```
+
+**Xong!** ✅ AWF sẽ tự động tải và cấu hình vào Antigravity.
 
 ---
 
@@ -102,7 +126,12 @@ Mở file `docs/index.html` để xem hướng dẫn đầy đủ với giao di�
 
 ## 📜 Changelog
 
-### v4.1.0 (Latest)
+### v4.1.2 (Latest)
+- 🆕 Hỗ trợ cài đặt riêng biệt cho Antigravity 1.0 và 2.0+ qua tham số `-Version`
+- ✅ Khắc phục triệt để lỗi font tiếng Việt hiển thị trên Windows PowerShell Console
+- ✅ Đổi tên file README.md trong global_workflows thành README.txt tránh crash parser
+
+### v4.1.0
 - 🆕 **Eternal Context System** - Auto-save để không bao giờ mất context
 - 🆕 Skill `awf-auto-save` với trigger thông minh
 - 🆕 3-Tier lazy loading cho session restore

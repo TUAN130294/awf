@@ -5,7 +5,7 @@
 > **Extension framework for Antigravity Agent.**
 > Transform your AI into a professional team (PM, Designer, Coder) with standardized workflows.
 
-[![Version](https://img.shields.io/badge/version-4.0.1-blue.svg)](https://github.com/TUAN130294/awf)
+[![Version](https://img.shields.io/badge/version-4.1.2-blue.svg)](https://github.com/TUAN130294/awf)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ---
@@ -43,23 +43,47 @@ AI: "What kind of app do you want to build? Tell me in plain language..."
 ## Quick Install (One Command)
 
 ### Windows (PowerShell)
-Open Terminal (**Ctrl + `**) and paste:
+Select the version suitable for your Antigravity setup:
 
-```powershell
-irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1 | iex
-```
+* **For Antigravity v2.0+ (Recommended - New Skill Layout)**:
+  ```powershell
+  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1))) -Version 2.0
+  ```
 
-### macOS / Linux
-```bash
-curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | sh
-```
+* **For Antigravity v1.0 (Legacy Global Layout)**:
+  ```powershell
+  & ([scriptblock]::Create((irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1))) -Version 1.0
+  ```
 
-**Done!** AWF will automatically download and configure into Antigravity.
+* **Install Both (Maximum Compatibility / Default)**:
+  ```powershell
+  irm https://raw.githubusercontent.com/TUAN130294/awf/main/install.ps1 | iex
+  ```
 
-> **Windows: ExecutionPolicy error?** Run this first:
+> ⚠️ **Windows: ExecutionPolicy error?** Run this first:
 > ```powershell
 > Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 > ```
+
+### macOS / Linux
+Select the version suitable for your Antigravity setup:
+
+* **For Antigravity v2.0+ (Recommended - New Skill Layout)**:
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | bash -s -- -v 2.0
+  ```
+
+* **For Antigravity v1.0 (Legacy Global Layout)**:
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | bash -s -- -v 1.0
+  ```
+
+* **Install Both (Maximum Compatibility / Default)**:
+  ```bash
+  curl -fsSL https://raw.githubusercontent.com/TUAN130294/awf/main/install.sh | bash
+  ```
+
+**Done!** AWF will automatically download and configure into Antigravity.
 
 ---
 
@@ -215,7 +239,18 @@ To check and update to the latest version:
 
 ## Changelog
 
-### v4.0.1 (Latest)
+### v4.1.2 (Latest)
+- 🆕 Support selective installation for Antigravity 1.0 and 2.0+ via `-Version` parameter
+- ✅ Fix UTF-8 encoding/font issues in Windows PowerShell Console
+- ✅ Rename README.md in global_workflows to README.txt to prevent parser crash
+
+### v4.1.0
+- 🆕 **Eternal Context System** - Auto-save to never lose context
+- 🆕 Smart trigger skill `awf-auto-save`
+- 🆕 3-Tier lazy loading for session restore
+- ✅ Session schema v2.0 with summary & checkpoints
+
+### v4.0.1
 - Fix Windows install script issues
 - Improved Session Restore skill
 - Added `/awf-update` workflow
