@@ -1,8 +1,15 @@
-# AWF Installer for Windows (PowerShell)
-# Tự động detect Antigravity Global Workflows
+﻿# AWF Installer for Windows (PowerShell)
+# Tự động detect Antigravity Global Workflows và tương thích cả Antigravity 1.0 & 2.0+
+
+# Force UTF-8 Console Output Encoding để hiển thị tiếng Việt và emoji đẹp mắt
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
 $RepoBase = "https://raw.githubusercontent.com/TUAN130294/awf/main"
 $RepoUrl = "$RepoBase/workflows"
+
+# Encoding UTF-8 không BOM cho PowerShell 5.1+
+$utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+
 # Full workflow list (v4.0.2) - Ordered by flow
 $Workflows = @(
     # Core Flow: init → brainstorm → plan → design → visualize → code → run
@@ -37,19 +44,25 @@ $AwfSkills = @(
     "awf-onboarding"
 )
 
-# Detect Antigravity Global Path
-$AntigravityGlobal = "$env:USERPROFILE\.gemini\antigravity\global_workflows"
-$SchemasDir = "$env:USERPROFILE\.gemini\antigravity\schemas"
-$TemplatesDir = "$env:USERPROFILE\.gemini\antigravity\templates"
-$SkillsDir = "$env:USERPROFILE\.gemini\antigravity\skills"
-$GeminiMd = "$env:USERPROFILE\.gemini\GEMINI.md"
+# Detect Antigravity target paths
+$Targets = @()
+if (Test-Path "$env:USERPROFILE\.gemini\antigravity") {
+    $Targets += "$env:USERPROFILE\.gemini\antigravity"
+}
+if (Test-Path "$env:USERPROFILE\.gemini\antigravity-ide") {
+    $Targets += "$env:USERPROFILE\.gemini\antigravity-ide"
+}
+if ($Targets.Count -eq 0) {
+    $Targets += "$env:USERPROFILE\.gemini\antigravity"
+}
+
 $AwfVersionFile = "$env:USERPROFILE\.gemini\awf_version"
 
 # Get version from repo
 try {
     $CurrentVersion = (Invoke-WebRequest -Uri "$RepoBase/VERSION" -UseBasicParsing).Content.Trim()
 } catch {
-    $CurrentVersion = "3.4.0"
+    $CurrentVersion = "4.1.2"
 }
 
 Write-Host ""
@@ -60,121 +73,159 @@ Write-Host ""
 
 # Check if updating
 if (Test-Path $AwfVersionFile) {
-    $OldVersion = Get-Content $AwfVersionFile
-    Write-Host "📦 Phiên bản hiện tại: $OldVersion" -ForegroundColor Yellow
-    Write-Host "📦 Phiên bản mới: $CurrentVersion" -ForegroundColor Green
-    Write-Host ""
+    try {
+        $OldVersion = [System.IO.File]::ReadAllText($AwfVersionFile, [System.Text.Encoding]::UTF8).Trim()
+        Write-Host "📦 Phiên bản hiện tại: $OldVersion" -ForegroundColor Yellow
+        Write-Host "📦 Phiên bản mới: $CurrentVersion" -ForegroundColor Green
+        Write-Host ""
+    } catch {
+        # Bỏ qua nếu lỗi đọc
+    }
 }
 
-# 1. Cài Global Workflows
-if (-not (Test-Path $AntigravityGlobal)) {
-    New-Item -ItemType Directory -Force -Path $AntigravityGlobal | Out-Null
-    Write-Host "📂 Đã tạo thư mục Global: $AntigravityGlobal" -ForegroundColor Green
-} else {
-    Write-Host "✅ Tìm thấy Antigravity Global: $AntigravityGlobal" -ForegroundColor Green
-}
-
-Write-Host "⏳ Đang tải workflows..." -ForegroundColor Cyan
 $success = 0
-foreach ($wf in $Workflows) {
-    try {
-        Invoke-WebRequest -Uri "$RepoUrl/$wf" -OutFile "$AntigravityGlobal\$wf" -ErrorAction Stop
-        Write-Host "   ✅ $wf" -ForegroundColor Green
-        $success++
-    } catch {
-        Write-Host "   ❌ $wf" -ForegroundColor Red
+
+foreach ($Target in $Targets) {
+    Write-Host "📂 Đang cài đặt vào mục tiêu: $Target" -ForegroundColor Cyan
+    
+    $AntigravityGlobal = "$Target\global_workflows"
+    $SchemasDir = "$Target\schemas"
+    $TemplatesDir = "$Target\templates"
+    $SkillsDir = "$Target\skills"
+
+    # 1. Cài Global Workflows
+    if (-not (Test-Path $AntigravityGlobal)) {
+        New-Item -ItemType Directory -Force -Path $AntigravityGlobal | Out-Null
+        Write-Host "📂 Đã tạo thư mục Global: $AntigravityGlobal" -ForegroundColor Green
+    } else {
+        Write-Host "✅ Tìm thấy Antigravity Global: $AntigravityGlobal" -ForegroundColor Green
+    }
+
+    Write-Host "⏳ Đang tải workflows..." -ForegroundColor Cyan
+    foreach ($wf in $Workflows) {
+        try {
+            $wfDest = $wf
+            if ($wf -eq "README.md") {
+                $wfDest = "README.txt" # Đổi tên README.md để không làm crash parser của Antigravity
+            }
+            
+            $destPath = "$AntigravityGlobal\$wfDest"
+            Invoke-WebRequest -Uri "$RepoUrl/$wf" -OutFile $destPath -ErrorAction Stop
+            Write-Host "   ✅ $wfDest" -ForegroundColor Green
+            $success++
+            
+            # Tự động convert thành skill cho Antigravity 2.0+ (trừ README.md)
+            if ($wf -ne "README.md") {
+                $wfName = $wf.Replace(".md", "")
+                $skillName = "awf-$wfName"
+                $skillDir = "$SkillsDir\$skillName"
+                if (-not (Test-Path $skillDir)) {
+                    New-Item -ItemType Directory -Force -Path $skillDir | Out-Null
+                }
+                
+                # Copy file workflow vừa tải sang thư mục skill làm SKILL.md
+                Copy-Item -Path $destPath -Destination "$skillDir\SKILL.md" -Force
+                Write-Host "      ➔ Đã đăng ký skill 2.0: $skillName" -ForegroundColor DarkGray
+            }
+        } catch {
+            Write-Host "   ❌ $wf (Lỗi: $_)" -ForegroundColor Red
+        }
+    }
+
+    # 2. Download Schemas
+    if (-not (Test-Path $SchemasDir)) {
+        New-Item -ItemType Directory -Force -Path $SchemasDir | Out-Null
+    }
+    Write-Host "⏳ Đang tải schemas..." -ForegroundColor Cyan
+    foreach ($schema in $Schemas) {
+        try {
+            Invoke-WebRequest -Uri "$RepoBase/schemas/$schema" -OutFile "$SchemasDir\$schema" -ErrorAction Stop
+            Write-Host "   ✅ $schema" -ForegroundColor Green
+            $success++
+        } catch {
+            Write-Host "   ❌ $schema (Lỗi: $_)" -ForegroundColor Red
+        }
+    }
+
+    # 3. Download Templates
+    if (-not (Test-Path $TemplatesDir)) {
+        New-Item -ItemType Directory -Force -Path $TemplatesDir | Out-Null
+    }
+    Write-Host "⏳ Đang tải templates..." -ForegroundColor Cyan
+    foreach ($template in $Templates) {
+        try {
+            Invoke-WebRequest -Uri "$RepoBase/templates/$template" -OutFile "$TemplatesDir\$template" -ErrorAction Stop
+            Write-Host "   ✅ $template" -ForegroundColor Green
+            $success++
+        } catch {
+            Write-Host "   ❌ $template (Lỗi: $_)" -ForegroundColor Red
+        }
+    }
+
+    # 4. Download AWF Skills mặc định
+    if (-not (Test-Path $SkillsDir)) {
+        New-Item -ItemType Directory -Force -Path $SkillsDir | Out-Null
+    }
+    Write-Host "⏳ Đang tải skills mặc định..." -ForegroundColor Cyan
+    foreach ($skill in $AwfSkills) {
+        $skillDir = "$SkillsDir\$skill"
+        if (-not (Test-Path $skillDir)) {
+            New-Item -ItemType Directory -Force -Path $skillDir | Out-Null
+        }
+        try {
+            Invoke-WebRequest -Uri "$RepoBase/awf_skills/$skill/SKILL.md" -OutFile "$skillDir\SKILL.md" -ErrorAction Stop
+            Write-Host "   ✅ $skill" -ForegroundColor Green
+            $success++
+        } catch {
+            Write-Host "   ❌ $skill (Lỗi: $_)" -ForegroundColor Red
+        }
     }
 }
 
-# 2. Download Schemas (v3.3+)
-if (-not (Test-Path $SchemasDir)) {
-    New-Item -ItemType Directory -Force -Path $SchemasDir | Out-Null
-}
-Write-Host "⏳ Đang tải schemas..." -ForegroundColor Cyan
-foreach ($schema in $Schemas) {
-    try {
-        Invoke-WebRequest -Uri "$RepoBase/schemas/$schema" -OutFile "$SchemasDir\$schema" -ErrorAction Stop
-        Write-Host "   ✅ $schema" -ForegroundColor Green
-        $success++
-    } catch {
-        Write-Host "   ❌ $schema" -ForegroundColor Red
-    }
-}
-
-# 3. Download Templates (v3.3+)
-if (-not (Test-Path $TemplatesDir)) {
-    New-Item -ItemType Directory -Force -Path $TemplatesDir | Out-Null
-}
-Write-Host "⏳ Đang tải templates..." -ForegroundColor Cyan
-foreach ($template in $Templates) {
-    try {
-        Invoke-WebRequest -Uri "$RepoBase/templates/$template" -OutFile "$TemplatesDir\$template" -ErrorAction Stop
-        Write-Host "   ✅ $template" -ForegroundColor Green
-        $success++
-    } catch {
-        Write-Host "   ❌ $template" -ForegroundColor Red
-    }
-}
-
-# 4. Download AWF Skills (v4.0+)
-Write-Host "⏳ Đang tải skills (v4.0+)..." -ForegroundColor Cyan
-foreach ($skill in $AwfSkills) {
-    $skillDir = "$SkillsDir\$skill"
-    if (-not (Test-Path $skillDir)) {
-        New-Item -ItemType Directory -Force -Path $skillDir | Out-Null
-    }
-    try {
-        Invoke-WebRequest -Uri "$RepoBase/awf_skills/$skill/SKILL.md" -OutFile "$skillDir\SKILL.md" -ErrorAction Stop
-        Write-Host "   ✅ $skill" -ForegroundColor Green
-        $success++
-    } catch {
-        Write-Host "   ❌ $skill" -ForegroundColor Red
-    }
-}
-
-# 5. Save version
+# 5. Save version (Global)
 if (-not (Test-Path "$env:USERPROFILE\.gemini")) {
     New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.gemini" | Out-Null
 }
-Set-Content -Path $AwfVersionFile -Value $CurrentVersion -Encoding UTF8
+[System.IO.File]::WriteAllText($AwfVersionFile, $CurrentVersion, $utf8NoBom)
 Write-Host "✅ Đã lưu version: $CurrentVersion" -ForegroundColor Green
 
-# 5. Update Global Rules (GEMINI.md)
+# 6. Update Global Rules (GEMINI.md)
+$GeminiMd = "$env:USERPROFILE\.gemini\GEMINI.md"
 $AwfInstructions = @"
 
 # AWF - Antigravity Workflow Framework
 
 ## CRITICAL: Command Recognition
-Khi user gõ các lệnh bắt đầu bằng ``/`` dưới đây, đây là AWF WORKFLOW COMMANDS (không phải file path).
+Khi user gõ các lệnh bắt đầu bằng `/` dưới đây, đây là AWF WORKFLOW COMMANDS (không phải file path).
 Bạn PHẢI đọc file workflow tương ứng và thực hiện theo hướng dẫn trong đó.
 
 ## Command Mapping (v4.0.2 - Full Flow):
 | Command | Workflow File | Mô tả |
 |---------|--------------|-------|
-| ``/init`` | init.md | ✨ Khởi tạo dự án mới |
-| ``/brainstorm`` | brainstorm.md | 💡 Bàn ý tưởng, research |
-| ``/plan`` | plan.md | 📋 Lên kế hoạch tính năng |
-| ``/design`` | design.md | 🎨 Thiết kế kỹ thuật (DB, API, Flow) |
-| ``/visualize`` | visualize.md | 🖼️ Thiết kế UI/UX mockup |
-| ``/code`` | code.md | 💻 Viết code |
-| ``/run`` | run.md | ▶️ Chạy ứng dụng |
-| ``/debug`` | debug.md | 🐛 Sửa lỗi |
-| ``/test`` | test.md | 🧪 Kiểm thử |
-| ``/audit`` | audit.md | 🔒 Kiểm tra bảo mật |
-| ``/deploy`` | deploy.md | 🚀 Deploy production |
-| ``/next`` | next.md | ➡️ Gợi ý bước tiếp theo |
-| ``/recap`` | recap.md | 📖 Khôi phục ngữ cảnh |
-| ``/help`` | help.md | ❓ Trợ giúp & Hướng dẫn |
-| ``/customize`` | customize.md | ⚙️ Cá nhân hóa AI |
-| ``/refactor`` | refactor.md | 🔧 Tái cấu trúc code |
-| ``/review`` | review.md | 👀 Review code |
-| ``/save-brain`` | save_brain.md | 🧠 Lưu kiến thức |
-| ``/rollback`` | rollback.md | ⏪ Rollback deployment |
-| ``/awf-update`` | awf-update.md | 📦 Cập nhật AWF |
-| ``/cloudflare-tunnel`` | cloudflare-tunnel.md | 🌐 Quản lý tunnel |
+| `/init` | init.md | ✨ Khởi tạo dự án mới |
+| `/brainstorm` | brainstorm.md | 💡 Bàn ý tưởng, research |
+| `/plan` | plan.md | 📋 Lên kế hoạch tính năng |
+| `/design` | design.md | 🎨 Thiết kế kỹ thuật (DB, API, Flow) |
+| `/visualize` | visualize.md | 🖼️ Thiết kế UI/UX mockup |
+| `/code` | code.md | 💻 Viết code |
+| `/run` | run.md | ▶️ Chạy ứng dụng |
+| `/debug` | debug.md | 🐛 Sửa lỗi |
+| `/test` | test.md | 🧪 Kiểm thử |
+| `/audit` | audit.md | 🔒 Kiểm tra bảo mật |
+| `/deploy` | deploy.md | 🚀 Deploy production |
+| `/next` | next.md | ➡️ Gợi ý bước tiếp theo |
+| `/recap` | recap.md | 📖 Khôi phục ngữ cảnh |
+| `/help` | help.md | ❓ Trợ giúp & Hướng dẫn |
+| `/customize` | customize.md | ⚙️ Cá nhân hóa AI |
+| `/refactor` | refactor.md | 🔧 Tái cấu trúc code |
+| `/review` | review.md | 👀 Review code |
+| `/save-brain` | save_brain.md | 🧠 Lưu kiến thức |
+| `/rollback` | rollback.md | ⏪ Rollback deployment |
+| `/awf-update` | awf-update.md | 📦 Cập nhật AWF |
+| `/cloudflare-tunnel` | cloudflare-tunnel.md | 🌐 Quản lý tunnel |
 
 ## Flow Chuẩn (v4.0.2):
-``/init`` → ``/plan`` → ``/design`` → ``/code`` → ``/run`` → ``/test`` → ``/deploy``
+`/init` → `/plan` → `/design` → `/code` → `/run` → `/test` → `/deploy`
 
 ## Resource Locations (v4.0+):
 - Schemas: ~/.gemini/antigravity/schemas/
@@ -211,21 +262,21 @@ Skills là helper ẩn, tự động kích hoạt khi cần. User KHÔNG cần g
 "@
 
 if (-not (Test-Path $GeminiMd)) {
-    Set-Content -Path $GeminiMd -Value $AwfInstructions -Encoding UTF8
+    [System.IO.File]::WriteAllText($GeminiMd, $AwfInstructions, $utf8NoBom)
     Write-Host "✅ Đã tạo Global Rules (GEMINI.md)" -ForegroundColor Green
 } else {
-    # Always update to latest version - just overwrite AWF section
-    $content = Get-Content $GeminiMd -Raw -ErrorAction SilentlyContinue
-    if ($null -eq $content) { $content = "" }
-
-    # Simple check and replace: remove everything from AWF header to end of file
+    $content = ""
+    try {
+        $content = [System.IO.File]::ReadAllText($GeminiMd, [System.Text.Encoding]::UTF8)
+    } catch {}
+    
     $awfMarker = "# AWF - Antigravity Workflow Framework"
     $markerIndex = $content.IndexOf($awfMarker)
     if ($markerIndex -ge 0) {
         $content = $content.Substring(0, $markerIndex)
     }
-    $content = $content.TrimEnd() + "`n" + $AwfInstructions
-    Set-Content -Path $GeminiMd -Value $content -Encoding UTF8
+    $content = $content.TrimEnd() + "`r`n`r`n" + $AwfInstructions
+    [System.IO.File]::WriteAllText($GeminiMd, $content, $utf8NoBom)
     Write-Host "✅ Đã cập nhật Global Rules (GEMINI.md)" -ForegroundColor Green
 }
 
@@ -234,11 +285,7 @@ Write-Host "━━━━━━━━━━━━━━━━━━━━━━�
 Write-Host "🎉 HOÀN TẤT! Đã cài $success files vào hệ thống." -ForegroundColor Yellow
 Write-Host "📦 Version: $CurrentVersion" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📂 Workflows: $AntigravityGlobal" -ForegroundColor DarkGray
-Write-Host "📂 Schemas:   $SchemasDir" -ForegroundColor DarkGray
-Write-Host "📂 Templates: $TemplatesDir" -ForegroundColor DarkGray
-Write-Host "📂 Skills:    $SkillsDir" -ForegroundColor DarkGray
-Write-Host ""
+Write-Host "📂 Workflows & Skills đã được đồng bộ hóa thành công cho Antigravity 2.0+!" -ForegroundColor Green
 Write-Host "👉 Bạn có thể dùng AWF ở BẤT KỲ project nào ngay lập tức!" -ForegroundColor Cyan
 Write-Host "👉 Thử gõ '/plan' để kiểm tra." -ForegroundColor White
 Write-Host "👉 Kiểm tra update: '/awf-update'" -ForegroundColor White
