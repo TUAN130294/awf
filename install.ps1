@@ -1,4 +1,9 @@
-﻿# AWF Installer for Windows (PowerShell)
+﻿Param(
+    [ValidateSet("1.0", "2.0", "both")]
+    [string]$Version = "both"
+)
+
+# AWF Installer for Windows (PowerShell)
 # Tự động detect Antigravity Global Workflows và tương thích cả Antigravity 1.0 & 2.0+
 
 # Force UTF-8 Console Output Encoding để hiển thị tiếng Việt và emoji đẹp mắt
@@ -70,6 +75,8 @@ Write-Host "╔═════════════════════�
 Write-Host "║     🚀 AWF - Antigravity Workflow Framework v$CurrentVersion        ║" -ForegroundColor Cyan
 Write-Host "╚══════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
 Write-Host ""
+Write-Host "⚙️ Cài đặt phiên bản: $Version" -ForegroundColor Yellow
+Write-Host ""
 
 # Check if updating
 if (Test-Path $AwfVersionFile) {
@@ -93,12 +100,14 @@ foreach ($Target in $Targets) {
     $TemplatesDir = "$Target\templates"
     $SkillsDir = "$Target\skills"
 
-    # 1. Cài Global Workflows
-    if (-not (Test-Path $AntigravityGlobal)) {
-        New-Item -ItemType Directory -Force -Path $AntigravityGlobal | Out-Null
-        Write-Host "📂 Đã tạo thư mục Global: $AntigravityGlobal" -ForegroundColor Green
-    } else {
-        Write-Host "✅ Tìm thấy Antigravity Global: $AntigravityGlobal" -ForegroundColor Green
+    # 1. Cài Global Workflows (Cho bản 1.0 hoặc both)
+    if ($Version -eq "1.0" -or $Version -eq "both") {
+        if (-not (Test-Path $AntigravityGlobal)) {
+            New-Item -ItemType Directory -Force -Path $AntigravityGlobal | Out-Null
+            Write-Host "📂 Đã tạo thư mục Global: $AntigravityGlobal" -ForegroundColor Green
+        } else {
+            Write-Host "✅ Tìm thấy Antigravity Global: $AntigravityGlobal" -ForegroundColor Green
+        }
     }
 
     Write-Host "⏳ Đang tải workflows..." -ForegroundColor Cyan
@@ -109,23 +118,36 @@ foreach ($Target in $Targets) {
                 $wfDest = "README.txt" # Đổi tên README.md để không làm crash parser của Antigravity
             }
             
-            $destPath = "$AntigravityGlobal\$wfDest"
-            Invoke-WebRequest -Uri "$RepoUrl/$wf" -OutFile $destPath -ErrorAction Stop
-            Write-Host "   ✅ $wfDest" -ForegroundColor Green
-            $success++
-            
-            # Tự động convert thành skill cho Antigravity 2.0+ (trừ README.md)
-            if ($wf -ne "README.md") {
-                $wfName = $wf.Replace(".md", "")
-                $skillName = "awf-$wfName"
-                $skillDir = "$SkillsDir\$skillName"
-                if (-not (Test-Path $skillDir)) {
-                    New-Item -ItemType Directory -Force -Path $skillDir | Out-Null
+            # 1. Nếu cài bản 1.0 hoặc both: Tải về global_workflows
+            if ($Version -eq "1.0" -or $Version -eq "both") {
+                $destPath = "$AntigravityGlobal\$wfDest"
+                Invoke-WebRequest -Uri "$RepoUrl/$wf" -OutFile $destPath -ErrorAction Stop
+                Write-Host "   ✅ $wfDest (Bản 1.0)" -ForegroundColor Green
+                $success++
+            }
+
+            # 2. Nếu cài bản 2.0 hoặc both: Chuyển đổi/Đăng ký dưới dạng Skill
+            if ($Version -eq "2.0" -or $Version -eq "both") {
+                if ($wf -ne "README.md") {
+                    $wfName = $wf.Replace(".md", "")
+                    $skillName = "awf-$wfName"
+                    $skillDir = "$SkillsDir\$skillName"
+                    if (-not (Test-Path $skillDir)) {
+                        New-Item -ItemType Directory -Force -Path $skillDir | Out-Null
+                    }
+                    
+                    # Nếu đã tải về local rồi (ở bước Version 1.0 hoặc both), copy sang cho nhanh
+                    if ($Version -eq "both") {
+                        Copy-Item -Path "$AntigravityGlobal\$wfDest" -Destination "$skillDir\SKILL.md" -Force
+                    } else {
+                        # Tải trực tiếp từ Github về SKILL.md
+                        Invoke-WebRequest -Uri "$RepoUrl/$wf" -OutFile "$skillDir\SKILL.md" -ErrorAction Stop
+                    }
+                    Write-Host "      ➔ Đã đăng ký skill 2.0: $skillName" -ForegroundColor DarkGray
+                    if ($Version -eq "2.0") {
+                        $success++
+                    }
                 }
-                
-                # Copy file workflow vừa tải sang thư mục skill làm SKILL.md
-                Copy-Item -Path $destPath -Destination "$skillDir\SKILL.md" -Force
-                Write-Host "      ➔ Đã đăng ký skill 2.0: $skillName" -ForegroundColor DarkGray
             }
         } catch {
             Write-Host "   ❌ $wf (Lỗi: $_)" -ForegroundColor Red
@@ -285,7 +307,7 @@ Write-Host "━━━━━━━━━━━━━━━━━━━━━━�
 Write-Host "🎉 HOÀN TẤT! Đã cài $success files vào hệ thống." -ForegroundColor Yellow
 Write-Host "📦 Version: $CurrentVersion" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "📂 Workflows & Skills đã được đồng bộ hóa thành công cho Antigravity 2.0+!" -ForegroundColor Green
+Write-Host "📂 Cài đặt thành công phiên bản $Version của AWF!" -ForegroundColor Green
 Write-Host "👉 Bạn có thể dùng AWF ở BẤT KỲ project nào ngay lập tức!" -ForegroundColor Cyan
 Write-Host "👉 Thử gõ '/plan' để kiểm tra." -ForegroundColor White
 Write-Host "👉 Kiểm tra update: '/awf-update'" -ForegroundColor White
